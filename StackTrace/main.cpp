@@ -51,6 +51,8 @@ bool LaunchProcess(const wchar_t* targetProcessPath, wchar_t* commandLineArgs = 
     return true;
 }
 
+//useless commit
+
 int main()
 {
 
