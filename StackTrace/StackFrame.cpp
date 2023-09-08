@@ -52,11 +52,7 @@ BOOL __stdcall EnumVariablesCallback(PSYMBOL_INFO info, ULONG size, PVOID param)
 
 	if (sep->loadParam)
 		sep->pFrame->VariableEnumProc(info);
-	return TRUE;
-	// Parameters are also local variables but we dont want them so SYMFLAG_PARAMETER
-	// should not be set.
-	
-	
+	return TRUE;	
 }
 
 BOOL __stdcall EnumSymbolCallback(PSYMBOL_INFO inf, ULONG size, PVOID param)
@@ -137,8 +133,6 @@ void StackFrame::LoadCConv(PSYMBOL_INFO info)
 		std::cout << "SymGetTypeInfo() failed" << GetLastError() <<std::endl;
 	}
 
-	// The cases which cover 2 values are always near and far but its not interesting for a stack
-	// trace if the function is a near or a far call.
 	switch (callConv)
 	{
 	case 0:
@@ -174,7 +168,7 @@ void StackFrame::ToString()
 {
 	std::stringstream ret;
 	ret << m_returnType->ToString() << " ";
-	//ret << m_callConvention << " ";
+	ret << m_callConvention << " ";
 	ret << m_functionName << "(";
 	for (UINT i = 0; i < m_parameters.size(); ++i)
 	{
@@ -195,44 +189,6 @@ void StackFrame::ToString()
 	std::cout << ret2.str();
 
 }
-
-struct Node* StackFrame::createDataStructure(struct Node* head)
-{
-	while (m_functionName != "invoke_main")
-	{
-		int total = m_parameters.size() + localVariables.size();
-
-		struct Node* temp = new Node;
-		temp->nameOfFunc = m_functionName;
-		temp->returnType = m_returnType->ToString();
-		temp->next = head;  // Link the new node to the previous head
-
-		temp->table = new Table[total];
-
-		for (UINT i = 0; i < m_parameters.size(); ++i)
-		{
-			temp->table[i].name = m_parameters[i].m_objName;
-			temp->table[i].datatype = m_parameters[i].m_typeName;
-		}
-
-		int j = 0;
-		for (UINT i = m_parameters.size() + 1; i < total; ++i)
-		{
-			temp->table[i].name = localVariables[j].m_objName;
-			temp->table[i].datatype = localVariables[j].m_typeName;
-			j++;
-		}
-
-		head = temp;   // Update the head to point to the new node
-
-		delete[] temp->table;
-		delete temp;
-
-		return head;
-	}
-}
-
-
 
 int StackFrame::getContextFlag()
 {

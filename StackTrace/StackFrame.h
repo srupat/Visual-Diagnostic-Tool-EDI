@@ -7,21 +7,6 @@
 
 #include "FunctionObject.h"
 
-struct Node {
-	struct Node* next;
-	std::string nameOfFunc;
-	std::string returnType;
-	struct Table* table;
-};
-
-struct Table {
-	std::string datatype;
-	std::string name;
-	std::string value;
-	std::string address;
-};
-
-
 class StackFrame
 {
 	friend BOOL __stdcall EnumSymbolCallback(PSYMBOL_INFO inf, ULONG size, PVOID param);
@@ -31,7 +16,7 @@ class StackFrame
 
 	std::vector<FunctionObject> m_parameters;
 	std::vector<FunctionObject> localVariables;
-
+	
 	std::string m_functionName;
 	FunctionObject* m_returnType;
 	std::string m_callConvention;
@@ -44,7 +29,7 @@ class StackFrame
 	void ParameterEnumProc(PSYMBOL_INFO sym);
 	void VariableEnumProc(PSYMBOL_INFO sym);
 
-	StackFrame(StackFrame& other, HANDLE handle) : frame(other.frame), hProcess(handle) { }
+	StackFrame(StackFrame& other,HANDLE handle) : frame(other.frame),hProcess(handle) { }
 	void operator=(StackFrame&) { }
 
 public:
@@ -57,7 +42,4 @@ public:
 
 	void ToString();
 	int getContextFlag();
-	struct Node* createDataStructure(struct Node* head);
-
-	//abheerav
 };

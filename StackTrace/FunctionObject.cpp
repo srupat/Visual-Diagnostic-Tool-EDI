@@ -163,15 +163,15 @@ FunctionObject::FunctionObject(PSYMBOL_INFO sym, STACKFRAME64 frame,HANDLE hProc
 	ULONG64 address = frame.AddrFrame.Offset;
 	VariantInit(&m_value);
 	LoadName(sym);
-	LoadType(sym, address, hProcess);
-	LoadValue(frame, sym->Address,hProcess);
+	LoadType(sym, address);
+	LoadValue(frame, sym->Address);
 }
 
 FunctionObject::FunctionObject(PSYMBOL_INFO sym,HANDLE hProcess) : m_isReturnObj(true)
 {
 	m_symbol = sym;
 	m_hProcess = hProcess;
-	LoadType(sym,NULL,hProcess);
+	LoadType(sym,NULL);
 }
 
 void FunctionObject::LoadName(PSYMBOL_INFO sym)
@@ -191,7 +191,7 @@ BOOL CALLBACK EnumerateMembersCallback(PSYMBOL_INFO pSymInfo, ULONG SymbolSize, 
 	return TRUE; // Continue enumeration
 }
 
-void FunctionObject::LoadType(PSYMBOL_INFO sym, ULONG64 frameAddress,HANDLE hProcess)
+void FunctionObject::LoadType(PSYMBOL_INFO sym, ULONG64 frameAddress)
 {
 	// Sadly loading the actual name of the type must be done in several different
 	// ways for different types. To see which one we need to follow we first take
@@ -240,13 +240,13 @@ void FunctionObject::LoadType(PSYMBOL_INFO sym, ULONG64 frameAddress,HANDLE hPro
 		BOOL bResult = FALSE;
 
 		bResult = SymGetTypeInfo(m_hProcess, sym->ModBase, sym->TypeIndex, TI_GET_CHILDRENCOUNT, &ChildCount);
-		if (!bResult)
+		if (!bResult) 
 		{
 			std::cout << "SymGetTypeInfo failed with error :" << GetLastError() << std::endl;
 		}
 
 		pChildren = (TI_FINDCHILDREN_PARAMS*)malloc(sizeof(TI_FINDCHILDREN_PARAMS) + ChildCount * sizeof(ULONG));
-		if (!pChildren)
+		if (!pChildren) 
 		{
 			// Handle error
 		}
@@ -255,7 +255,7 @@ void FunctionObject::LoadType(PSYMBOL_INFO sym, ULONG64 frameAddress,HANDLE hPro
 		pChildren->Start = 0;
 
 		bResult = SymGetTypeInfo(m_hProcess, sym->ModBase, sym->TypeIndex, TI_FINDCHILDREN, pChildren);
-		if (!bResult)
+		if (!bResult) 
 		{
 			std::cout << "SymGetTypeInfo failed with error :" << GetLastError() << std::endl;
 		}
@@ -269,11 +269,11 @@ void FunctionObject::LoadType(PSYMBOL_INFO sym, ULONG64 frameAddress,HANDLE hPro
 			if (!SymGetTypeInfo(m_hProcess, sym->ModBase, ChildId, TI_GET_SYMNAME, &symbolName))
 			{
 				std::cout << "SymGetTypeInfo failed with error :" << GetLastError() << std::endl;
-			}
-			if (!SymGetTypeInfo(m_hProcess, sym->ModBase, ChildId, TI_GET_TYPE, &type))
+			}			
+			if (!SymGetTypeInfo(m_hProcess, sym->ModBase, ChildId , TI_GET_TYPE, &type))
 			{
 				std::cout << "SymGetTypeInfo failed with error :" << GetLastError() << std::endl;
-			}
+			}				
 			SymGetTypeInfo(m_hProcess, sym->ModBase, type, TI_GET_BASETYPE, &bt);
 			SymGetTypeInfo(m_hProcess, sym->ModBase, type, TI_GET_LENGTH, &length);
 			LoadBasicType(bt, length);
@@ -382,7 +382,7 @@ void FunctionObject::LoadPointerType(PSYMBOL_INFO sym, DWORD type)
 		LPWSTR symName = NULL;
 		BOOL ret = SymGetTypeInfo(m_hProcess, sym->ModBase, sym->TypeIndex, TI_GET_SYMNAME, &symName);
 		{
-			std::cout << "SymEnumTypes function failed " << std::endl;
+			//std::cout << "SymEnumTypes function failed " << std::endl;
 		}
 		if (ret == TRUE)
 		{
@@ -397,7 +397,7 @@ void FunctionObject::LoadPointerType(PSYMBOL_INFO sym, DWORD type)
 	}
 }
 
-void FunctionObject::LoadValue(STACKFRAME64 frame, ULONG64 addr,HANDLE hProcess)
+void FunctionObject::LoadValue(STACKFRAME64 frame, ULONG64 addr)
 {
 	
 	 //AddFrame holds the address of the current frame on the stack where locale variables
@@ -425,7 +425,7 @@ void FunctionObject::LoadValue(STACKFRAME64 frame, ULONG64 addr,HANDLE hProcess)
 	case VT_BLOB:
 	{
 		LPDWORD* buffer = (LPDWORD*)malloc(sizeof(int));
-		bool a = ReadProcessMemory(hProcess, mem, (LPVOID)buffer, sizeof(int), NULL);
+		bool a = ReadProcessMemory(m_hProcess, mem, (LPVOID)buffer, sizeof(int), NULL);
 		m_value.uintVal = *(LPDWORD)buffer;
 		break;
 	}
@@ -433,14 +433,14 @@ void FunctionObject::LoadValue(STACKFRAME64 frame, ULONG64 addr,HANDLE hProcess)
 	{
 		
 		int* buffer = (int*)malloc(sizeof(int));
-		bool a = ReadProcessMemory(hProcess, mem, (LPVOID)buffer, sizeof(int), NULL);
+		bool a = ReadProcessMemory(m_hProcess, mem, (LPVOID)buffer, sizeof(int), NULL);
 		m_value.intVal = *(int*)buffer;
 		break;
 	}
 	case VT_R4:
 	{
 		float* buffer = (float*)malloc(sizeof(float));
-		bool a = ReadProcessMemory(hProcess, mem, (LPVOID)buffer, sizeof(float), NULL);
+		bool a = ReadProcessMemory(m_hProcess, mem, (LPVOID)buffer, sizeof(float), NULL);
 		m_value.fltVal = *(FLOAT*)buffer;
 		break;
 	}
@@ -453,7 +453,7 @@ void FunctionObject::LoadValue(STACKFRAME64 frame, ULONG64 addr,HANDLE hProcess)
 	case VT_I1:
 	{
 		char* buffer = (char*)malloc(sizeof(char));	
-		bool a = ReadProcessMemory(hProcess, (LPVOID)mem, buffer, sizeof(char), NULL);
+		bool a = ReadProcessMemory(m_hProcess, (LPVOID)mem, buffer, sizeof(char), NULL);
 		m_value.intVal = *(signed __int8*)buffer;
 		
 		break;
@@ -542,3 +542,4 @@ void FunctionObject::LoadEnumValue(int value)
 	strm << "(" << m_typeName << ")" << value;
 	m_enumValue = strm.str();
 }
+

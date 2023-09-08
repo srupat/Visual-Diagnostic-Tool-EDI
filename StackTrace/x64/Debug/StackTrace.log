@@ -1,0 +1,11 @@
+﻿  FunctionObject.cpp
+C:\Users\91878\source\repos\StackTrace\StackTrace\FunctionObject.cpp(235,26): warning C4101: 'memberInfo': unreferenced local variable
+C:\Users\91878\source\repos\StackTrace\StackTrace\FunctionObject.cpp(363,76): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\91878\source\repos\StackTrace\StackTrace\FunctionObject.cpp(363,53): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\91878\source\repos\StackTrace\StackTrace\FunctionObject.cpp(501,77): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\91878\source\repos\StackTrace\StackTrace\FunctionObject.cpp(501,54): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+  main.cpp
+  StackFrame.cpp
+  stackTrace.cpp
+  Generating Code...
+  StackTrace.vcxproj -> C:\Users\91878\source\repos\StackTrace\x64\Debug\StackTrace.exe
