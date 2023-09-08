@@ -67,23 +67,23 @@ void StackTrace::printStackTrace(HANDLE hProcess)
                     stackFrame.AddrFrame.Mode = AddrModeFlat;
                     stackFrame.AddrStack.Mode = AddrModeFlat;
 
-                    //  m_frames.push_back(new StackFrame(stackFrame, hProcess));
+                  //  m_frames.push_back(new StackFrame(stackFrame, hProcess));
                     struct Node* head = NULL;
                     // Print the stack trace.
                     while (StackWalk64(machineType, hProcess, hThread, &stackFrame, &context, nullptr,
                         SymFunctionTableAccess64, SymGetModuleBase64, nullptr))
                     {
-
+                        
                         StackFrame* frame = new StackFrame(stackFrame, hProcess);
-
+                        
                         if (frame->getContextFlag() == 1)
-                        {
-                            frame->ToString();
-                            printf("\n");
+                        {                            
+                            frame->ToString();                         
+                            printf("\n");                            
                             m_frames.push_back(frame);
                             SymFromAddr(hProcess, stackFrame.AddrPC.Offset, nullptr, symbol);
-                            head = frame->createDataStructure(head);
-                        }
+                            head = frame->createDataStructure(head);                                                       
+                        }                        
                     }
                 }
                 ResumeThread(hThread);

@@ -51,8 +51,6 @@ bool LaunchProcess(const wchar_t* targetProcessPath, wchar_t* commandLineArgs = 
     return true;
 }
 
-//useless commit
-
 int main()
 {
 
@@ -119,7 +117,7 @@ int main()
 
             if (_wcsicmp(szProcessName, L"Visual_Test.exe") == 0)
             {
-                std::cout << "Stack Trace for the target process:" << std::endl;
+                std::cout << "Stack Trace for the process : " << std::endl;
                 StackTrace stackTrace;
                 stackTrace.printStackTrace(hProcess);
             }

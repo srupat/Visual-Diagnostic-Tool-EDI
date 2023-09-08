@@ -11,7 +11,8 @@ enum BasicType;
 class FunctionObject
 {
 	VARIANT m_value;
-	
+	std::string m_objName;
+	std::string m_typeName;
 	HANDLE m_hProcess;
 	enum SymTagEnum m_tag;
 	std::string m_enumValue;
@@ -23,7 +24,7 @@ class FunctionObject
 	void LoadName(PSYMBOL_INFO sym);
 
 	// Loads the name of the type of that symbol
-	void LoadType(PSYMBOL_INFO sym, ULONG64 frameAddress, HANDLE hProcess);
+	void LoadType(PSYMBOL_INFO sym);
 
 	// Try to load the actual value of that object if possible
 	void LoadValue(STACKFRAME64 frame, ULONG64 address,HANDLE hProcess);
@@ -52,6 +53,14 @@ public:
 	// Returns the current function object represented as a string
 	std::string ToString();
 
-	std::string m_objName;
-	std::string m_typeName;
+	
+	void extractValues(std::string& name, std::string& datatype, VARIANT& value, ULONG64 address) const
+	{
+		name = m_objName;
+		datatype = m_typeName;
+		value = m_value;
+		address = m_symbol->Address; 
+	}
+
+	
 };

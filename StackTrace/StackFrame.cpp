@@ -1,5 +1,6 @@
 #include "StackFrame.h"
 #include<iostream>
+#include<cstdlib>
 #pragma comment(lib, "Dbghelp.lib")
 
 // Later we use loadParam to indicate if parameters of local variables should be loaded
@@ -14,6 +15,8 @@ struct SymEnumLocals
 	StackFrame* pFrame;
 	bool loadLocal;
 };
+
+
 
 StackFrame::StackFrame(STACKFRAME64& stackFrame,HANDLE handle) : frame(stackFrame), hProcess(handle)
 {
@@ -54,9 +57,7 @@ BOOL __stdcall EnumVariablesCallback(PSYMBOL_INFO info, ULONG size, PVOID param)
 		sep->pFrame->VariableEnumProc(info);
 	return TRUE;
 	// Parameters are also local variables but we dont want them so SYMFLAG_PARAMETER
-	// should not be set.
-	
-	
+	// should not be set.	
 }
 
 BOOL __stdcall EnumSymbolCallback(PSYMBOL_INFO inf, ULONG size, PVOID param)
@@ -175,28 +176,33 @@ void StackFrame::ToString()
 	std::stringstream ret;
 	ret << m_returnType->ToString() << " ";
 	//ret << m_callConvention << " ";
-	ret << m_functionName << "(";
-	for (UINT i = 0; i < m_parameters.size(); ++i)
-	{
-		if (i > 0)
-			ret << ", ";
-		ret << m_parameters[i].ToString();
-	}
-	ret << ")";
-	std::cout << std::endl;
-	std::stringstream ret2;
-	for (UINT i = 0; i < localVariables.size(); ++i)
-	{
-		if (i > 0)
-			ret2 << "\n ";
-		ret2 << localVariables[i].ToString();
-	}
-	std::cout << ret.str();
-	std::cout << ret2.str();
+		ret << m_functionName << "(";
 
+		for (UINT i = 0; i < m_parameters.size(); ++i)
+		{
+			if (i > 0)
+				ret << ", ";
+			ret << m_parameters[i].ToString();
+		}
+
+		ret << ")";
+		std::cout << std::endl;
+		std::stringstream ret2;
+
+		for (UINT i = 0; i < localVariables.size(); ++i)
+		{
+			if (i > 0)
+				ret2 << "\n";
+			ret2 << localVariables[i].ToString();
+		}
+		std::cout << ret.str();
+		std::cout << ret2.str();
+	
 }
 
-struct Node* StackFrame::createDataStructure(struct Node* head)
+
+
+struct Node * StackFrame::createDataStructure(struct Node* head)
 {
 	while (m_functionName != "invoke_main")
 	{
@@ -206,20 +212,19 @@ struct Node* StackFrame::createDataStructure(struct Node* head)
 		temp->nameOfFunc = m_functionName;
 		temp->returnType = m_returnType->ToString();
 		temp->next = head;  // Link the new node to the previous head
-
+		
 		temp->table = new Table[total];
+		
 
 		for (UINT i = 0; i < m_parameters.size(); ++i)
 		{
-			temp->table[i].name = m_parameters[i].m_objName;
-			temp->table[i].datatype = m_parameters[i].m_typeName;
+			m_parameters[i].extractValues(temp->table[i].name, temp->table[i].datatype, temp->table[i].value, temp->table[i].address);
 		}
 
 		int j = 0;
 		for (UINT i = m_parameters.size() + 1; i < total; ++i)
 		{
-			temp->table[i].name = localVariables[j].m_objName;
-			temp->table[i].datatype = localVariables[j].m_typeName;
+			localVariables[i].extractValues(temp->table[i].name, temp->table[i].datatype, temp->table[i].value, temp->table[i].address);
 			j++;
 		}
 
@@ -231,7 +236,6 @@ struct Node* StackFrame::createDataStructure(struct Node* head)
 		return head;
 	}
 }
-
 
 
 int StackFrame::getContextFlag()

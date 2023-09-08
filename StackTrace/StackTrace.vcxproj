@@ -129,7 +129,10 @@
   <ItemGroup>
     <ClCompile Include="FunctionObject.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="StackFrame.cpp" />
+    <ClCompile Include="StackFrame.cpp">
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
     <ClCompile Include="stackTrace.cpp" />
   </ItemGroup>
   <ItemGroup>

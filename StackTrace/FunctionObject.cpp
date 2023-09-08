@@ -160,10 +160,9 @@ FunctionObject::FunctionObject(PSYMBOL_INFO sym, STACKFRAME64 frame,HANDLE hProc
 {
 	m_symbol = sym;
 	m_hProcess = hProcess;
-	ULONG64 address = frame.AddrFrame.Offset;
 	VariantInit(&m_value);
 	LoadName(sym);
-	LoadType(sym, address, hProcess);
+	LoadType(sym);
 	LoadValue(frame, sym->Address,hProcess);
 }
 
@@ -171,7 +170,7 @@ FunctionObject::FunctionObject(PSYMBOL_INFO sym,HANDLE hProcess) : m_isReturnObj
 {
 	m_symbol = sym;
 	m_hProcess = hProcess;
-	LoadType(sym,NULL,hProcess);
+	LoadType(sym);
 }
 
 void FunctionObject::LoadName(PSYMBOL_INFO sym)
@@ -180,23 +179,12 @@ void FunctionObject::LoadName(PSYMBOL_INFO sym)
 	m_objName = sym->Name;
 }
 
-BOOL CALLBACK EnumerateMembersCallback(PSYMBOL_INFO pSymInfo, ULONG SymbolSize, PVOID typeIndex)
-{
-
-	if (pSymInfo->Tag == SymTagData)
-	{
-		std::cout << pSymInfo->Name << std::endl;
-	}
-
-	return TRUE; // Continue enumeration
-}
-
-void FunctionObject::LoadType(PSYMBOL_INFO sym, ULONG64 frameAddress,HANDLE hProcess)
+void FunctionObject::LoadType(PSYMBOL_INFO sym)
 {
 	// Sadly loading the actual name of the type must be done in several different
 	// ways for different types. To see which one we need to follow we first take
 	// the tag of the symbol.
-	
+
 	m_typeName = "Unknown";
 	m_tag = (enum SymTagEnum)0;
 	SymGetTypeInfo(m_hProcess, sym->ModBase, sym->TypeIndex, TI_GET_SYMTAG, &m_tag);
@@ -232,45 +220,22 @@ void FunctionObject::LoadType(PSYMBOL_INFO sym, ULONG64 frameAddress,HANDLE hPro
 	// types and therefore have an entry in the PDB.
 	default:
 	{
-		TI_FINDCHILDREN_PARAMS* pChildren = NULL;
-		DWORD ChildCount = 0;
-		BOOL bResult = FALSE;
-
-		bResult = SymGetTypeInfo(m_hProcess, sym->ModBase, sym->TypeIndex, TI_GET_CHILDRENCOUNT, &ChildCount);
-		if (!bResult) 
+		// we dont want to evaluate complex types
+		m_value.vt = VT_UNKNOWN;
+		ULONG childrenCount;
+		BOOL ret = SymGetTypeInfo(m_hProcess, sym->ModBase, sym->TypeIndex, TI_GET_UDTKIND, &childrenCount);
+		std::cout << childrenCount << std::endl;
+	/*	if (ret == TRUE)
 		{
-			std::cout << "SymGetTypeInfo failed with error :" << GetLastError() << std::endl;
+			std::vector<char> ansi(wcslen(symName) + 1);
+			WideCharToMultiByte(CP_ACP, 0, symName, ansi.size(), &ansi[0], ansi.size(), NULL, NULL);
+			m_typeName = &ansi[0];
+			LocalFree(symN);
 		}
-
-		pChildren = (TI_FINDCHILDREN_PARAMS*)malloc(sizeof(TI_FINDCHILDREN_PARAMS) + ChildCount * sizeof(ULONG));
-		if (!pChildren) 
-		{
-			// Handle error
-		}
-
-		pChildren->Count = ChildCount;
-		pChildren->Start = 0;
-
-		bResult = SymGetTypeInfo(m_hProcess, sym->ModBase, sym->TypeIndex, TI_FINDCHILDREN, pChildren);
-		if (!bResult) 
-		{
-			std::cout << "SymGetTypeInfo failed with error :" << GetLastError() << std::endl;
-		}
-
-		for (ULONG i = 0; i < ChildCount; i++) {
-			ULONG ChildId = pChildren->ChildId[i];
-			std::cout << ChildId << std::endl;
-			WCHAR* symbolName = NULL;
-			if (!SymGetTypeInfo(m_hProcess, sym->ModBase, ChildId, TI_GET_SYMNAME, &symbolName))
-			{
-				std::cout << "SymGetTypeInfo failed with error :" << GetLastError() << std::endl;
-			}
-			std::cout << *symbolName << std::endl;
-		}
+		break;*/
 	}
 	}
 }
-
 
 std::string FunctionObject::GetValueString()
 {
@@ -413,9 +378,7 @@ void FunctionObject::LoadValue(STACKFRAME64 frame, ULONG64 addr,HANDLE hProcess)
 	case VT_UI4:
 	case VT_BLOB:
 	{
-		LPDWORD* buffer = (LPDWORD*)malloc(sizeof(int));
-		bool a = ReadProcessMemory(hProcess, mem, (LPVOID)buffer, sizeof(int), NULL);
-		m_value.uintVal = *(LPDWORD)buffer;
+		m_value.uintVal = *(LPDWORD)mem;
 		break;
 	}
 	case VT_I4:
