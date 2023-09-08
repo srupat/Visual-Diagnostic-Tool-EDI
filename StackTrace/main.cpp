@@ -55,7 +55,7 @@ int main()
 {
 
     // Replace "C:\\path\\to\\your\\program.exe" with the path to the target program.
-    const wchar_t* targetProcessPath = L"C:\\Users\\sruja\\source\\repos\\Visual_Test\\Debug\\Visual_Test.exe";
+    const wchar_t* targetProcessPath = L"C:\\Users\\91878\\source\\repos\\VD_test\\Debug\\VD_test.exe";
 
     // Additional command-line arguments if needed.
     wchar_t* commandLineArgs = nullptr;
@@ -115,7 +115,7 @@ int main()
             //std::wcout << L"Process Name: " << szProcessName << L", Process ID: " << processes[i] << std::endl;
 
 
-            if (_wcsicmp(szProcessName, L"Visual_Test.exe") == 0)
+            if (_wcsicmp(szProcessName, L"VD_test.exe") == 0)
             {
                 std::cout << "Stack Trace for the process : " << std::endl;
                 StackTrace stackTrace;
