@@ -3,6 +3,6 @@
   stackTrace.cpp
   Generating Code...
   StackFrame.cpp
-C:\Users\sruja\edi\Backup_StackTrace_4\ajun_ek_folder\StackTrace\StackTrace\StackFrame.cpp(225,44): warning C4018: '<': signed/unsigned mismatch
-C:\Users\sruja\edi\Backup_StackTrace_4\ajun_ek_folder\StackTrace\StackTrace\StackFrame.cpp(238): warning C4715: 'StackFrame::createDataStructure': not all control paths return a value
-  StackTrace.vcxproj -> C:\Users\sruja\edi\Backup_StackTrace_4\ajun_ek_folder\StackTrace\Debug\StackTrace.exe
+C:\Users\91878\Documents\GitHub\Visual-Diagnostic-Tool-EDI\StackTrace\StackFrame.cpp(225,44): warning C4018: '<': signed/unsigned mismatch
+C:\Users\91878\Documents\GitHub\Visual-Diagnostic-Tool-EDI\StackTrace\StackFrame.cpp(238): warning C4715: 'StackFrame::createDataStructure': not all control paths return a value
+  StackTrace.vcxproj -> C:\Users\91878\Documents\GitHub\Visual-Diagnostic-Tool-EDI\Debug\StackTrace.exe
