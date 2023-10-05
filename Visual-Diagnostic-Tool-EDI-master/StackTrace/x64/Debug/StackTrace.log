@@ -1,0 +1,13 @@
+﻿  FunctionObject.cpp
+C:\Users\91878\source\repos\StackTrace\StackTrace\FunctionObject.cpp(229,76): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\91878\source\repos\StackTrace\StackTrace\FunctionObject.cpp(229,53): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\91878\source\repos\StackTrace\StackTrace\FunctionObject.cpp(339,76): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\91878\source\repos\StackTrace\StackTrace\FunctionObject.cpp(339,53): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\91878\source\repos\StackTrace\StackTrace\FunctionObject.cpp(404,16): warning C4302: 'type cast': truncation from 'char *' to 'char'
+C:\Users\91878\source\repos\StackTrace\StackTrace\FunctionObject.cpp(474,77): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\91878\source\repos\StackTrace\StackTrace\FunctionObject.cpp(474,54): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+  main.cpp
+  StackFrame.cpp
+  stackTrace.cpp
+  Generating Code...
+  StackTrace.vcxproj -> C:\Users\91878\source\repos\StackTrace\x64\Debug\StackTrace.exe

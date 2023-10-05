@@ -1,0 +1,19 @@
+﻿  FunctionObject.cpp
+C:\Users\91878\source\repos\StackTrace\StackTrace\FunctionObject.cpp(229,76): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\91878\source\repos\StackTrace\StackTrace\FunctionObject.cpp(229,53): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\91878\source\repos\StackTrace\StackTrace\FunctionObject.cpp(339,76): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\91878\source\repos\StackTrace\StackTrace\FunctionObject.cpp(339,53): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\91878\source\repos\StackTrace\StackTrace\FunctionObject.cpp(383,15): warning C4311: 'type cast': pointer truncation from 'int *' to 'int'
+C:\Users\91878\source\repos\StackTrace\StackTrace\FunctionObject.cpp(383,15): warning C4302: 'type cast': truncation from 'int *' to 'int'
+C:\Users\91878\source\repos\StackTrace\StackTrace\FunctionObject.cpp(403,16): warning C4302: 'type cast': truncation from 'char *' to 'char'
+C:\Users\91878\source\repos\StackTrace\StackTrace\FunctionObject.cpp(355,6): warning C4101: 'buffer': unreferenced local variable
+C:\Users\91878\source\repos\StackTrace\StackTrace\FunctionObject.cpp(473,77): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\91878\source\repos\StackTrace\StackTrace\FunctionObject.cpp(473,54): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+  main.cpp
+  StackFrame.cpp
+  stackTrace.cpp
+  Generating code
+  Previous IPDB not found, fall back to full compilation.
+  All 287 functions were compiled because no usable IPDB/IOBJ from previous compilation was found.
+  Finished generating code
+  StackTrace.vcxproj -> C:\Users\91878\source\repos\StackTrace\x64\Release\StackTrace.exe
