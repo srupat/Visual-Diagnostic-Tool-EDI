@@ -222,9 +222,9 @@ struct Node * StackFrame::createDataStructure(struct Node* head)
 		}
 
 		int j = 0;
-		for (UINT i = m_parameters.size() + 1; i < total; ++i)
+		for (UINT i = 0; i < localVariables.size(); ++i)
 		{
-			localVariables[i].extractValues(temp->table[i].name, temp->table[i].datatype, temp->table[i].value, temp->table[i].address);
+			localVariables[i].extractValues(temp->table[m_parameters.size() + i].name, temp->table[m_parameters.size() + i].datatype, temp->table[m_parameters.size() + i].value, temp->table[m_parameters.size() + i].address);
 			j++;
 		}
 
