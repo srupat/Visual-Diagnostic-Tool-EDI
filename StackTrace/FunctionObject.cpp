@@ -220,52 +220,52 @@ void FunctionObject::LoadType(PSYMBOL_INFO sym)
 	// types and therefore have an entry in the PDB.
 	default:
 	{
-		TI_FINDCHILDREN_PARAMS* pChildren = NULL;
-		SYMBOL_INFO memInfo{ 0 };
-		memInfo.SizeOfStruct = sizeof(SYMBOL_INFO);
-		memInfo.MaxNameLen = 255;
-		DWORD ChildCount = 0;
-		BOOL bResult = FALSE;
+		//TI_FINDCHILDREN_PARAMS* pChildren = NULL;
+		//SYMBOL_INFO memInfo{ 0 };
+		//memInfo.SizeOfStruct = sizeof(SYMBOL_INFO);
+		//memInfo.MaxNameLen = 255;
+		//DWORD ChildCount = 0;
+		//BOOL bResult = FALSE;
 
-		bResult = SymGetTypeInfo(m_hProcess, sym->ModBase, sym->TypeIndex, TI_GET_CHILDRENCOUNT, &ChildCount);
-		if (!bResult)
-		{
-			std::cout << "SymGetTypeInfo failed with error :" << GetLastError() << std::endl;
-		}
+		//bResult = SymGetTypeInfo(m_hProcess, sym->ModBase, sym->TypeIndex, TI_GET_CHILDRENCOUNT, &ChildCount);
+		//if (!bResult)
+		//{
+		//	std::cout << "SymGetTypeInfo failed with error :" << GetLastError() << std::endl;
+		//}
 
-		pChildren = (TI_FINDCHILDREN_PARAMS*)malloc(sizeof(TI_FINDCHILDREN_PARAMS) + ChildCount * sizeof(ULONG));
-		if (!pChildren)
-		{
-			// Handle error
-		}
+		//pChildren = (TI_FINDCHILDREN_PARAMS*)malloc(sizeof(TI_FINDCHILDREN_PARAMS) + ChildCount * sizeof(ULONG));
+		//if (!pChildren)
+		//{
+		//	// Handle error
+		//}
 
-		pChildren->Count = ChildCount;
-		pChildren->Start = 0;
+		//pChildren->Count = ChildCount;
+		//pChildren->Start = 0;
 
-		bResult = SymGetTypeInfo(m_hProcess, sym->ModBase, sym->TypeIndex, TI_FINDCHILDREN, pChildren);
-		if (!bResult)
-		{
-			std::cout << "SymGetTypeInfo failed with error :" << GetLastError() << std::endl;
-		}
+		//bResult = SymGetTypeInfo(m_hProcess, sym->ModBase, sym->TypeIndex, TI_FINDCHILDREN, pChildren);
+		//if (!bResult)
+		//{
+		//	std::cout << "SymGetTypeInfo failed with error :" << GetLastError() << std::endl;
+		//}
 
-		for (ULONG i = 0; i < ChildCount; i++) {
-			ULONG ChildId = pChildren->ChildId[i];
-			WCHAR* symbolName = NULL;
-			DWORD type = 0;
-			ULONG64 length = 0;
-			BasicType bt = (BasicType)0;
-			if (!SymGetTypeInfo(m_hProcess, sym->ModBase, ChildId, TI_GET_SYMNAME, &symbolName))
-			{
-				std::cout << "SymGetTypeInfo failed with error :" << GetLastError() << std::endl;
-			}
-			if (!SymGetTypeInfo(m_hProcess, sym->ModBase, ChildId, TI_GET_TYPE, &type))
-			{
-				std::cout << "SymGetTypeInfo failed with error :" << GetLastError() << std::endl;
-			}
-			SymGetTypeInfo(m_hProcess, sym->ModBase, type, TI_GET_BASETYPE, &bt);
-			SymGetTypeInfo(m_hProcess, sym->ModBase, type, TI_GET_LENGTH, &length);
-			LoadBasicType(bt, length);
-		}
+		//for (ULONG i = 0; i < ChildCount; i++) {
+		//	ULONG ChildId = pChildren->ChildId[i];
+		//	WCHAR* symbolName = NULL;
+		//	DWORD type = 0;
+		//	ULONG64 length = 0;
+		//	BasicType bt = (BasicType)0;
+		//	if (!SymGetTypeInfo(m_hProcess, sym->ModBase, ChildId, TI_GET_SYMNAME, &symbolName))
+		//	{
+		//		std::cout << "SymGetTypeInfo failed with error :" << GetLastError() << std::endl;
+		//	}
+		//	if (!SymGetTypeInfo(m_hProcess, sym->ModBase, ChildId, TI_GET_TYPE, &type))
+		//	{
+		//		std::cout << "SymGetTypeInfo failed with error :" << GetLastError() << std::endl;
+		//	}
+		//	SymGetTypeInfo(m_hProcess, sym->ModBase, type, TI_GET_BASETYPE, &bt);
+		//	SymGetTypeInfo(m_hProcess, sym->ModBase, type, TI_GET_LENGTH, &length);
+		//	LoadBasicType(bt, length);
+		//}
 
 	}
 	}
@@ -412,7 +412,7 @@ void FunctionObject::LoadValue(STACKFRAME64 frame, ULONG64 addr,HANDLE hProcess)
 	case VT_UI4:
 	case VT_BLOB:
 	{
-		m_value.uintVal = *(LPDWORD)mem;
+		//m_value.uintVal = *(LPDWORD)mem;
 		break;
 	}
 	case VT_I4:
@@ -432,7 +432,7 @@ void FunctionObject::LoadValue(STACKFRAME64 frame, ULONG64 addr,HANDLE hProcess)
 	}
 	case VT_BOOL:
 	{
-		m_value.boolVal = *(bool*)mem;
+		//m_value.boolVal = *(bool*)mem;
 		break;
 	}
 	case VT_I1 | 0x1000:

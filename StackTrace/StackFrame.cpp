@@ -224,7 +224,7 @@ struct Node * StackFrame::createDataStructure(struct Node* head)
 		int j = 0;
 		for (UINT i = m_parameters.size() + 1; i < total; ++i)
 		{
-			localVariables[i].extractValues(temp->table[i].name, temp->table[i].datatype, temp->table[i].value, temp->table[i].address);
+		//	localVariables[i].extractValues(temp->table[i].name, temp->table[i].datatype, temp->table[i].value, temp->table[i].address);
 			j++;
 		}
 
