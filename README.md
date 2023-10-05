@@ -12,5 +12,8 @@
 ***
 #### Work done so far
 - Extracting the names of functions as well as the parameters and local variables associated
-- Extracting stack information and storing it into a data structure 
+- Extracting stack information and storing it into a data structure
+***
+#### Work to be done
+- take the data from the data structure that has been implemented and develop a GUI supporting the above aim
 
