@@ -2,11 +2,7 @@
 <Project>
   <ProjectOutputs>
     <ProjectOutput>
-<<<<<<< HEAD:Visual-Diagnostic-Tool-EDI-master/StackTrace/Debug/StackTrace.exe.recipe
       <FullPath>C:\Users\91878\Documents\GitHub\Visual-Diagnostic-Tool-EDI\Visual-Diagnostic-Tool-EDI-master\Debug\StackTrace.exe</FullPath>
-=======
-      <FullPath>D:\Srujan\Coding\github\Visual-Diagnostic-Tool-EDI\Debug\StackTrace.exe</FullPath>
->>>>>>> 10f659f5867b02a04137833cafafe7b5d2b4fa96:StackTrace/Debug/StackTrace.exe.recipe
     </ProjectOutput>
   </ProjectOutputs>
   <ContentFiles />

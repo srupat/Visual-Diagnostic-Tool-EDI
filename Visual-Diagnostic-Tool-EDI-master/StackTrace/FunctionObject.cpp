@@ -160,17 +160,18 @@ FunctionObject::FunctionObject(PSYMBOL_INFO sym, STACKFRAME64 frame,HANDLE hProc
 {
 	m_symbol = sym;
 	m_hProcess = hProcess;
+	ULONG64 address = frame.AddrFrame.Offset;
 	VariantInit(&m_value);
 	LoadName(sym);
-	LoadType(sym);
-	LoadValue(frame, sym->Address,hProcess);
+	LoadType(frame, sym, address);
+	LoadValue(frame, sym->Address, m_tag);
 }
 
 FunctionObject::FunctionObject(PSYMBOL_INFO sym,HANDLE hProcess) : m_isReturnObj(true)
 {
 	m_symbol = sym;
 	m_hProcess = hProcess;
-	LoadType(sym);
+	LoadType(sym, NULL);
 }
 
 void FunctionObject::LoadName(PSYMBOL_INFO sym)
@@ -179,7 +180,7 @@ void FunctionObject::LoadName(PSYMBOL_INFO sym)
 	m_objName = sym->Name;
 }
 
-void FunctionObject::LoadType(PSYMBOL_INFO sym)
+void FunctionObject::LoadType(STACKFRAME64 frame, PSYMBOL_INFO sym, ULONG64 frameAddress)
 {
 	// Sadly loading the actual name of the type must be done in several different
 	// ways for different types. To see which one we need to follow we first take
@@ -201,6 +202,7 @@ void FunctionObject::LoadType(PSYMBOL_INFO sym)
 		ULONG64 length = 0;
 		SymGetTypeInfo(m_hProcess, sym->ModBase, sym->TypeIndex, TI_GET_LENGTH, &length);
 		LoadBasicType(bt, length);
+		isUDT = false;
 		return;
 	}
 
@@ -213,7 +215,34 @@ void FunctionObject::LoadType(PSYMBOL_INFO sym)
 		// We need to override the possible type set by LoadPointerType because it should
 		// only take an address when we evaluate it.
 		m_value.vt = VT_BLOB;
+		isUDT = false;
 		return;
+	}
+
+	case SymTagArrayType:
+	{
+		DWORD arrayIndexType_ID;
+		DWORD arraySubType;
+		BasicType arrayBaseType;
+		ULONG64 elementLength;
+		DWORD count;
+		if (!SymGetTypeInfo(m_hProcess, sym->ModBase, sym->TypeIndex, TI_GET_ARRAYINDEXTYPEID, &arrayIndexType_ID))
+		{
+			std::cout << GetLastError() << std::endl;
+		}
+		SymGetTypeInfo(m_hProcess, sym->ModBase, sym->TypeIndex, TI_GET_TYPE, &arraySubType);
+		SymGetTypeInfo(m_hProcess, sym->ModBase, sym->TypeIndex, TI_GET_COUNT, &count);
+		SymGetTypeInfo(m_hProcess, sym->ModBase, arraySubType, TI_GET_BASETYPE, &arrayBaseType);
+		SymGetTypeInfo(m_hProcess, sym->ModBase, arraySubType, TI_GET_LENGTH, &elementLength);
+		LoadBasicType(arrayBaseType, elementLength);
+		for (int i = 0; i < count; i++)
+		{
+			LoadValue(frame, sym->Address + i * elementLength, m_tag);
+			arrayMembers.push_back(m_value);
+		}
+		m_objName = sym->Name;
+		std::cout << "found some array" << std::endl;
+		break;
 	}
 
 	// Now most of the rest can be simply parsed by getting the SYMNAME because they are complex
@@ -226,8 +255,12 @@ void FunctionObject::LoadType(PSYMBOL_INFO sym)
 		memInfo.MaxNameLen = 255;
 		DWORD ChildCount = 0;
 		BOOL bResult = FALSE;
+		DWORD type = 0;
+		enum SymTagEnum mem_tag = (enum SymTagEnum)0;
 
+		SymGetTypeInfo(m_hProcess, sym->ModBase, sym->TypeIndex, TI_GET_TYPE, &type);
 		bResult = SymGetTypeInfo(m_hProcess, sym->ModBase, sym->TypeIndex, TI_GET_CHILDRENCOUNT, &ChildCount);
+		isUDT = true;
 		if (!bResult)
 		{
 			std::cout << "SymGetTypeInfo failed with error :" << GetLastError() << std::endl;
@@ -248,12 +281,13 @@ void FunctionObject::LoadType(PSYMBOL_INFO sym)
 			std::cout << "SymGetTypeInfo failed with error :" << GetLastError() << std::endl;
 		}
 
-		for (ULONG i = 0; i < ChildCount; i++) {
+		for (ULONG i = 0; i < ChildCount; i++)
+		{
 			ULONG ChildId = pChildren->ChildId[i];
 			WCHAR* symbolName = NULL;
-			DWORD type = 0;
 			ULONG64 length = 0;
 			BasicType bt = (BasicType)0;
+			DWORD* memOffset;
 			if (!SymGetTypeInfo(m_hProcess, sym->ModBase, ChildId, TI_GET_SYMNAME, &symbolName))
 			{
 				std::cout << "SymGetTypeInfo failed with error :" << GetLastError() << std::endl;
@@ -262,10 +296,100 @@ void FunctionObject::LoadType(PSYMBOL_INFO sym)
 			{
 				std::cout << "SymGetTypeInfo failed with error :" << GetLastError() << std::endl;
 			}
-			SymGetTypeInfo(m_hProcess, sym->ModBase, type, TI_GET_BASETYPE, &bt);
-			SymGetTypeInfo(m_hProcess, sym->ModBase, type, TI_GET_LENGTH, &length);
-			LoadBasicType(bt, length);
+			SymGetTypeInfo(m_hProcess, sym->ModBase, type, TI_GET_SYMTAG, &mem_tag);
+			if (mem_tag == SymTagBaseType)
+			{
+				SymGetTypeInfo(m_hProcess, sym->ModBase, type, TI_GET_BASETYPE, &bt);
+				SymGetTypeInfo(m_hProcess, sym->ModBase, type, TI_GET_LENGTH, &length);
+				LoadBasicType(bt, length);
+			}
+			else
+				LoadPointerType(sym, type);
+			struct Members memObj;
+			std::wstring wideString(symbolName);
+			std::string narrowString(wideString.begin(), wideString.end());
+			memObj.m_typeName = m_typeName;
+			memObj.m_objName = narrowString;
+
+			SymGetTypeInfo(m_hProcess, sym->ModBase, ChildId, TI_GET_OFFSET, &memOffset);
+			LoadValue(frame, sym->Address + (ULONG64)memOffset, mem_tag);
+			memObj.m_value = m_value;
+			UDT_membersInfo.push_back(memObj);
+			m_typeName.clear();
+			m_objName.clear();
 		}
+		m_objName = sym->Name;
+	}
+	}
+}
+
+void FunctionObject::LoadType(PSYMBOL_INFO sym, ULONG64 frameAddress)
+{
+	// Sadly loading the actual name of the type must be done in several different
+	// ways for different types. To see which one we need to follow we first take
+	// the tag of the symbol.
+
+	m_typeName = "Unknown";
+	m_tag = (enum SymTagEnum)0;
+	SymGetTypeInfo(m_hProcess, sym->ModBase, sym->TypeIndex, TI_GET_SYMTAG, &m_tag);
+	switch (m_tag)
+	{
+		// Base types are types like int, float, void, char, ...
+		// They are not stored directly in the PDB because there aren't any big information
+		// that need to be stored for them. We can use TI_GET_BASETYPE to fill a BasicType
+		// which will describe the basic type and were done!
+	case SymTagBaseType:
+	{
+		BasicType bt = (BasicType)0;
+		SymGetTypeInfo(m_hProcess, sym->ModBase, sym->TypeIndex, TI_GET_BASETYPE, &bt);
+		ULONG64 length = 0;
+		SymGetTypeInfo(m_hProcess, sym->ModBase, sym->TypeIndex, TI_GET_LENGTH, &length);
+		LoadBasicType(bt, length);
+		isUDT = false;
+		return;
+	}
+
+	// For pointer types we just need to take the type it points to and then load that type
+	case SymTagPointerType:
+	{
+		DWORD subType;
+		SymGetTypeInfo(m_hProcess, sym->ModBase, sym->TypeIndex, TI_GET_TYPE, &subType);
+		LoadPointerType(sym, subType);
+		// We need to override the possible type set by LoadPointerType because it should
+		// only take an address when we evaluate it.
+		m_value.vt = VT_BLOB;
+		isUDT = false;
+		return;
+	}
+
+	// Now most of the rest can be simply parsed by getting the SYMNAME because they are complex
+	// types and therefore have an entry in the PDB.
+	default:
+	{
+		TI_FINDCHILDREN_PARAMS* pChildren = NULL;
+		SYMBOL_INFO memInfo{ 0 };
+		memInfo.SizeOfStruct = sizeof(SYMBOL_INFO);
+		memInfo.MaxNameLen = 255;
+		DWORD ChildCount = 0;
+		BOOL bResult = FALSE;
+		DWORD type = 0;
+		enum SymTagEnum mem_tag = (enum SymTagEnum)0;
+
+		SymGetTypeInfo(m_hProcess, sym->ModBase, sym->TypeIndex, TI_GET_TYPE, &type);
+		bResult = SymGetTypeInfo(m_hProcess, sym->ModBase, sym->TypeIndex, TI_GET_CHILDRENCOUNT, &ChildCount);
+		isUDT = false;
+		if (!bResult)
+		{
+			std::cout << "SymGetTypeInfo failed with error :" << GetLastError() << std::endl;
+		}
+
+		pChildren = (TI_FINDCHILDREN_PARAMS*)malloc(sizeof(TI_FINDCHILDREN_PARAMS) + ChildCount * sizeof(ULONG));
+		if (!pChildren)
+		{
+			// Handle error
+		}
+		pChildren->Count = ChildCount;
+		pChildren->Start = 0;
 	}
 	}
 }
@@ -328,10 +452,38 @@ std::string FunctionObject::ToString()
 {
 	if (m_isReturnObj)
 		return m_typeName;
-
-	std::stringstream ret;
-	ret << m_typeName << " " << m_objName << " = " << GetValueString();
-	return ret.str();
+	if (isUDT)
+	{
+		std::stringstream ret;
+		ret << "struct " << m_objName << "\n";
+		for (int i = 0; i < UDT_membersInfo.size(); i++)
+		{
+			m_value = UDT_membersInfo.at(i).m_value;
+			ret << UDT_membersInfo.at(i).m_typeName << " " << UDT_membersInfo.at(i).m_objName << " = " << GetValueString() << std::endl;
+		}
+		return ret.str();
+	}
+	else
+	{
+		std::stringstream ret;
+		if (m_tag == SymTagArrayType)
+		{
+			ret << '\n' << m_typeName << " " << m_objName << "[]" << " = ";
+			for (VARIANT var : arrayMembers)
+			{
+				m_value = var;
+				ret << GetValueString() << " ";
+			}
+			ret << std::endl;
+			return ret.str();
+		}
+		else
+		{
+			
+			ret << m_typeName << " " << m_objName << " = " << GetValueString();
+			return ret.str();
+		}
+	}
 }
 
 void FunctionObject::LoadPointerType(PSYMBOL_INFO sym, DWORD type)
@@ -384,15 +536,15 @@ void FunctionObject::LoadPointerType(PSYMBOL_INFO sym, DWORD type)
 	}
 }
 
-void FunctionObject::LoadValue(STACKFRAME64 frame, ULONG64 addr,HANDLE hProcess)
+void FunctionObject::LoadValue(STACKFRAME64 frame, ULONG64 addr, enum SymTagEnum mem_tag)
 {
-	
-	 //AddFrame holds the address of the current frame on the stack where locale variables
-	 //and parameters are stored. the symbol address actually holds the offset on the 
-	 //stack so we get a pointer to the data by adding the offset to the frame pointer
-	
+
+	//AddFrame holds the address of the current frame on the stack where locale variables
+	//and parameters are stored. the symbol address actually holds the offset on the 
+	//stack so we get a pointer to the data by adding the offset to the frame pointer
+
 	LPVOID mem = (LPVOID)(frame.AddrFrame.Offset + addr);
-	
+
 
 	if (m_tag == SymTagEnum)
 	{
@@ -406,69 +558,81 @@ void FunctionObject::LoadValue(STACKFRAME64 frame, ULONG64 addr,HANDLE hProcess)
 		return;
 	}
 
-	switch (m_value.vt)
+	if (mem_tag == SymTagPointerType)
 	{
-	case VT_UI4:
-	case VT_BLOB:
-	{
-		//m_value.uintVal = *(LPDWORD)mem;
-		break;
-	}
-	case VT_I4:
-	{
-		
 		int* buffer = (int*)malloc(sizeof(int));
-		bool a = ReadProcessMemory(hProcess, mem, (LPVOID)buffer, sizeof(int), NULL);
-		m_value.intVal = *(int*)buffer;
-		break;
+		bool a = ReadProcessMemory(m_hProcess, mem, (LPVOID)buffer, sizeof(int), NULL);
+		m_value.intVal = *buffer;
+		m_value.vt = 3;
 	}
-	case VT_R4:
+	else
 	{
-		float* buffer = (float*)malloc(sizeof(float));
-		bool a = ReadProcessMemory(hProcess, mem, (LPVOID)buffer, sizeof(float), NULL);
-		m_value.fltVal = *(FLOAT*)buffer;
-		break;
-	}
-	case VT_BOOL:
-	{
-		m_value.boolVal = *(bool*)mem;
-		break;
-	}
-	case VT_I1 | 0x1000:
-	case VT_I1:
-	{
-		char* buffer = (char*)malloc(sizeof(char));	
-		bool a = ReadProcessMemory(hProcess, (LPVOID)mem, buffer, sizeof(char), NULL);
-		m_value.intVal = *(signed __int8*)buffer;
-		
-		break;
-	}
-	case VT_I1 | 0x8000:
-	case VT_I2:
-	{
-		m_value.intVal = *(signed __int16*)mem;
-		break;
-	}
-	case VT_I8:
-	{
-		m_value.llVal = *(signed __int64*)mem;
-		break;
-	}
-	case VT_UI1:
-	{
-		m_value.uintVal = *(unsigned __int8*)mem;
-		break;
-	}
-	case VT_UI2:
-	{
-		m_value.uintVal = *(unsigned __int16*)mem;
-		break;
-	}
-	case VT_UI8:
-	{
-		m_value.ullVal = *(unsigned __int64*)mem;
-		break;
-	}
+		switch (m_value.vt)
+		{
+		case VT_UI4:
+		case VT_BLOB:
+		{
+			LPDWORD* buffer = (LPDWORD*)malloc(sizeof(int));
+			bool a = ReadProcessMemory(m_hProcess, mem, (LPVOID)buffer, sizeof(int), NULL);
+			m_value.uintVal = *(LPDWORD)buffer;
+			break;
+		}
+		case VT_I4:
+		{
+
+			int* buffer = (int*)malloc(sizeof(int));
+			bool a = ReadProcessMemory(m_hProcess, mem, (LPVOID)buffer, sizeof(int), NULL);
+			m_value.intVal = *(int*)buffer;
+			break;
+		}
+		case VT_R4:
+		{
+			float* buffer = (float*)malloc(sizeof(float));
+			bool a = ReadProcessMemory(m_hProcess, mem, (LPVOID)buffer, sizeof(float), NULL);
+			m_value.fltVal = *(FLOAT*)buffer;
+			break;
+		}
+		case VT_BOOL:
+		{
+			//m_value.boolVal = *(bool*)mem;
+			break;
+		}
+		case VT_I1 | 0x1000:
+		case VT_I1:
+		{
+			char* buffer = (char*)malloc(sizeof(char));
+			bool a = ReadProcessMemory(m_hProcess, (LPVOID)mem, buffer, sizeof(int), NULL);
+			m_value.intVal = *(signed __int8*)buffer;
+
+			break;
+		}
+		case VT_I1 | 0x8000:
+		case VT_I2:
+		{
+			m_value.intVal = *(signed __int16*)mem;
+			break;
+		}
+		case VT_I8:
+		{
+			m_value.llVal = *(signed __int64*)mem;
+			break;
+		}
+		case VT_UI1:
+		{
+			m_value.uintVal = *(unsigned __int8*)mem;
+			break;
+		}
+		case VT_UI2:
+		{
+			m_value.uintVal = *(unsigned __int16*)mem;
+			break;
+		}
+		case VT_UI8:
+		{
+			m_value.ullVal = *(unsigned __int64*)mem;
+			break;
+		}
+		}
 	}
 }
 
