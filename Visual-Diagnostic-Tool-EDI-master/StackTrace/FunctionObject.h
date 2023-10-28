@@ -8,15 +8,25 @@
 
 enum BasicType;
 
+struct Members
+{
+	VARIANT m_value;
+	std::string m_objName;
+	std::string m_typeName;
+};
+
 class FunctionObject
 {
 	VARIANT m_value;
 	std::string m_objName;
 	std::string m_typeName;
 	HANDLE m_hProcess;
+	std::vector<Members> UDT_membersInfo;
+	std::vector<VARIANT> arrayMembers;
 	enum SymTagEnum m_tag;
 	std::string m_enumValue;
 	bool m_isReturnObj;
+	bool isUDT;
 
 	PSYMBOL_INFO m_symbol;
 
@@ -24,10 +34,12 @@ class FunctionObject
 	void LoadName(PSYMBOL_INFO sym);
 
 	// Loads the name of the type of that symbol
-	void LoadType(PSYMBOL_INFO sym);
+	void LoadType(STACKFRAME64 frame, PSYMBOL_INFO sym, ULONG64 frameAddress);
+
+	void LoadType(PSYMBOL_INFO sym, ULONG64 frameAddress);
 
 	// Try to load the actual value of that object if possible
-	void LoadValue(STACKFRAME64 frame, ULONG64 address,HANDLE hProcess);
+	void LoadValue(STACKFRAME64 frame, ULONG64 address, enum SymTagEnum mem_tag);
 
 	// Tries to match an enum's members to a given value
 	void LoadEnumValue(int value);
