@@ -1,0 +1,12 @@
+﻿<Window x:Class="Visualizer.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Expander From BSTR" Height="400" Width="400">
+    <Grid>
+        <Button Content="View Stack" Width="100" Height="30" Click="MyButton_Click" Margin="290,10,10,344"/>
+
+        <StackPanel Name="stackPanel" VerticalAlignment="Top" HorizontalAlignment="Left">
+            <!-- Expanders will be added here dynamically. -->
+        </StackPanel>
+    </Grid>
+</Window>
