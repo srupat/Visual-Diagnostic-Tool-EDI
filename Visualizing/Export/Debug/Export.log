@@ -1,0 +1,218 @@
+﻿  pch.cpp
+  dllmain.cpp
+  Export.cpp
+  FunctionObject.cpp
+D:\Srujan\test\Visualizing\Export\FunctionObject.cpp(242,21): warning C4018: '<': signed/unsigned mismatch
+D:\Srujan\test\Visualizing\Export\FunctionObject.cpp(466,21): warning C4018: '<': signed/unsigned mismatch
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.37.32822\include\xstring(2728,53): warning C4244: 'argument': conversion from 'wchar_t' to 'const _Elem', possible loss of data
+          with
+          [
+              _Elem=char
+          ]
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.37.32822\include\xstring(2584,17): message : see reference to function template instantiation 'void std::basic_string<char,std::char_traits<char>,std::allocator<char>>::_Construct_from_iter<wchar_t*,wchar_t*,_Size_type>(_Iter,const _Sent,_Size)' being compiled
+          with
+          [
+              _Size_type=unsigned int,
+              _Iter=wchar_t *,
+              _Sent=wchar_t *,
+              _Size=unsigned int
+          ]
+D:\Srujan\test\Visualizing\Export\FunctionObject.cpp(317,28): message : see reference to function template instantiation 'std::basic_string<char,std::char_traits<char>,std::allocator<char>>::basic_string<std::_String_iterator<std::_String_val<std::_Simple_types<_Elem>>>,0>(_Iter,_Iter,const _Alloc &)' being compiled
+          with
+          [
+              _Elem=wchar_t,
+              _Iter=std::_String_iterator<std::_String_val<std::_Simple_types<wchar_t>>>,
+              _Alloc=std::allocator<char>
+          ]
+D:\Srujan\test\Visualizing\Export\FunctionObject.cpp(317,28): message : see the first reference to 'std::basic_string<char,std::char_traits<char>,std::allocator<char>>::basic_string' in 'FunctionObject::LoadType'
+  StackFrame.cpp
+  StackTrace.cpp
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.37.32822\include\xmemory(719,82): error C2665: 'std::basic_string<char,std::char_traits<char>,std::allocator<char>>::basic_string': no overloaded function could convert all the argument types
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.37.32822\include\xstring(2539,5): message : could be 'std::basic_string<char,std::char_traits<char>,std::allocator<char>>::basic_string(const _Elem *const )'
+          with
+          [
+              _Elem=char
+          ]
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.37.32822\include\xmemory(719,82): message : 'std::basic_string<char,std::char_traits<char>,std::allocator<char>>::basic_string(const _Elem *const )': cannot convert argument 1 from '_Ty' to 'const _Elem *const '
+          with
+          [
+              _Elem=char
+          ]
+          and
+          [
+              _Ty=char
+          ]
+          and
+          [
+              _Elem=char
+          ]
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.37.32822\include\xmemory(719,103): message : Conversion from integral type to pointer type requires reinterpret_cast, C-style cast or parenthesized function-style cast
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.37.32822\include\xstring(3072,5): message : or       'std::basic_string<char,std::char_traits<char>,std::allocator<char>>::basic_string(std::initializer_list<_Elem>,const _Alloc &)'
+          with
+          [
+              _Elem=char,
+              _Alloc=std::allocator<char>
+          ]
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.37.32822\include\xmemory(719,82): message : 'std::basic_string<char,std::char_traits<char>,std::allocator<char>>::basic_string(std::initializer_list<_Elem>,const _Alloc &)': cannot convert argument 1 from '_Ty' to 'std::initializer_list<_Elem>'
+          with
+          [
+              _Elem=char,
+              _Alloc=std::allocator<char>
+          ]
+          and
+          [
+              _Ty=char
+          ]
+          and
+          [
+              _Elem=char
+          ]
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.37.32822\include\xmemory(719,103): message : 'std::initializer_list<_Elem>::initializer_list': no overloaded function could convert all the argument types
+          with
+          [
+              _Elem=char
+          ]
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.37.32822\include\initializer_list(52,1): message : could be 'std::initializer_list<_Elem>::initializer_list(std::initializer_list<_Elem> &&)'
+          with
+          [
+              _Elem=char
+          ]
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.37.32822\include\xmemory(719,103): message : 'std::initializer_list<_Elem>::initializer_list(std::initializer_list<_Elem> &&)': cannot convert argument 1 from '_Ty' to 'std::initializer_list<_Elem> &&'
+          with
+          [
+              _Elem=char
+          ]
+          and
+          [
+              _Ty=char
+          ]
+          and
+          [
+              _Elem=char
+          ]
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.37.32822\include\xmemory(719,103): message : Reason: cannot convert from '_Ty' to 'std::initializer_list<_Elem>'
+          with
+          [
+              _Ty=char
+          ]
+          and
+          [
+              _Elem=char
+          ]
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.37.32822\include\xmemory(719,103): message : Conversion requires a second user-defined-conversion operator or constructor
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.37.32822\include\initializer_list(52,1): message : or       'std::initializer_list<_Elem>::initializer_list(const std::initializer_list<_Elem> &)'
+          with
+          [
+              _Elem=char
+          ]
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.37.32822\include\xmemory(719,103): message : 'std::initializer_list<_Elem>::initializer_list(const std::initializer_list<_Elem> &)': cannot convert argument 1 from '_Ty' to 'const std::initializer_list<_Elem> &'
+          with
+          [
+              _Elem=char
+          ]
+          and
+          [
+              _Ty=char
+          ]
+          and
+          [
+              _Elem=char
+          ]
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.37.32822\include\xmemory(719,103): message : Reason: cannot convert from '_Ty' to 'const std::initializer_list<_Elem>'
+          with
+          [
+              _Ty=char
+          ]
+          and
+          [
+              _Elem=char
+          ]
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.37.32822\include\xmemory(719,103): message : Conversion requires a second user-defined-conversion operator or constructor
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.37.32822\include\xmemory(719,103): message : while trying to match the argument list '(_Ty)'
+          with
+          [
+              _Ty=char
+          ]
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.37.32822\include\xstring(2485,5): message : or       'std::basic_string<char,std::char_traits<char>,std::allocator<char>>::basic_string(const _Alloc &) noexcept'
+          with
+          [
+              _Alloc=std::allocator<char>
+          ]
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.37.32822\include\xmemory(719,82): message : 'std::basic_string<char,std::char_traits<char>,std::allocator<char>>::basic_string(const _Alloc &) noexcept': cannot convert argument 1 from '_Ty' to 'const _Alloc &'
+          with
+          [
+              _Alloc=std::allocator<char>
+          ]
+          and
+          [
+              _Ty=char
+          ]
+          and
+          [
+              _Alloc=std::allocator<char>
+          ]
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.37.32822\include\xmemory(719,103): message : Reason: cannot convert from '_Ty' to 'const _Alloc'
+          with
+          [
+              _Ty=char
+          ]
+          and
+          [
+              _Alloc=std::allocator<char>
+          ]
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.37.32822\include\xmemory(719,103): message : 'std::allocator<char>::allocator': no overloaded function could convert all the argument types
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.37.32822\include\xmemory(960,5): message : could be 'std::allocator<char>::allocator(const std::allocator<char> &) noexcept'
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.37.32822\include\xmemory(719,103): message : 'std::allocator<char>::allocator(const std::allocator<char> &) noexcept': cannot convert argument 1 from '_Ty' to 'const std::allocator<char> &'
+          with
+          [
+              _Ty=char
+          ]
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.37.32822\include\xmemory(719,103): message : Reason: cannot convert from '_Ty' to 'const std::allocator<char>'
+          with
+          [
+              _Ty=char
+          ]
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.37.32822\include\xmemory(719,103): message : Conversion requires a second user-defined-conversion operator or constructor
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.37.32822\include\xmemory(958,5): message : or       'std::allocator<char>::allocator(void) noexcept'
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.37.32822\include\xmemory(719,103): message : 'std::allocator<char>::allocator': function does not take 1 arguments
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.37.32822\include\xmemory(962,5): message : or       'std::allocator<char>::allocator(const std::allocator<_Other> &) noexcept'
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.37.32822\include\xmemory(719,103): message : while trying to match the argument list '(_Ty)'
+          with
+          [
+              _Ty=char
+          ]
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.37.32822\include\xstring(2569,5): message : or       'std::basic_string<char,std::char_traits<char>,std::allocator<char>>::basic_string(_Iter,_Iter,const _Alloc &)'
+          with
+          [
+              _Alloc=std::allocator<char>
+          ]
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.37.32822\include\xmemory(719,82): message : 'std::basic_string<char,std::char_traits<char>,std::allocator<char>>::basic_string(_Iter,_Iter,const _Alloc &)': expects 3 arguments - 1 provided
+          with
+          [
+              _Alloc=std::allocator<char>
+          ]
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.37.32822\include\xmemory(719,82): message : while trying to match the argument list '(_Ty)'
+          with
+          [
+              _Ty=char
+          ]
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.37.32822\include\vector(800,27): message : see reference to function template instantiation 'void std::_Default_allocator_traits<_Alloc>::construct<_Ty,char>(_Alloc &,_Objty *const ,char &&)' being compiled
+          with
+          [
+              _Alloc=std::allocator<std::string>,
+              _Ty=std::basic_string<char,std::char_traits<char>,std::allocator<char>>,
+              _Objty=std::basic_string<char,std::char_traits<char>,std::allocator<char>>
+          ]
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.37.32822\include\vector(782,20): message : see reference to function template instantiation '_Ty &std::vector<_Ty,std::allocator<_Ty>>::_Emplace_back_with_unused_capacity<char>(char &&)' being compiled
+          with
+          [
+              _Ty=std::string
+          ]
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.37.32822\include\vector(864,24): message : see reference to function template instantiation '_Ty &std::vector<_Ty,std::allocator<_Ty>>::_Emplace_one_at_back<char>(char &&)' being compiled
+          with
+          [
+              _Ty=std::string
+          ]
+D:\Srujan\test\Visualizing\Export\StackTrace.cpp(84,45): message : see reference to function template instantiation 'void std::vector<std::string,std::allocator<std::string>>::emplace_back<char>(char &&)' being compiled
+  Generating Code...
+D:\Srujan\test\Visualizing\Export\StackFrame.cpp(380): warning C4715: 'StackFrame::createDataStructure': not all control paths return a value

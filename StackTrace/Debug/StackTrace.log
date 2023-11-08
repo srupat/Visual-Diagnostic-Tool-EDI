@@ -1,3 +1,0 @@
-﻿  StackFrame.cpp
-D:\Srujan\Coding\github\Visual-Diagnostic-Tool-EDI\StackTrace\StackFrame.cpp(238): warning C4715: 'StackFrame::createDataStructure': not all control paths return a value
-  StackTrace.vcxproj -> D:\Srujan\Coding\github\Visual-Diagnostic-Tool-EDI\Debug\StackTrace.exe
